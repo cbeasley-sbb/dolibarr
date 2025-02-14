@@ -15013,12 +15013,6 @@ parameters:
 			path: ../../../htdocs/don/list.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/don/list.php
-
-		-
 			message: '#^Variable \$projectstatic might not be defined\.$#'
 			identifier: variable.undefined
 			count: 6
@@ -25569,12 +25563,6 @@ parameters:
 		-
 			message: '#^Variable \$moreforfilter in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/reception/list.php
-
-		-
-			message: '#^Variable \$show_files might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/reception/list.php
 
