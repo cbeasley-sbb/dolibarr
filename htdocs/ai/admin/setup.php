@@ -28,7 +28,8 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/ai.lib.php';
+require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
+require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
 
 /**
  * @var Conf $conf
@@ -38,7 +39,9 @@ require_once '../lib/ai.lib.php';
  * @var User $user
  */
 
-$langs->loadLangs(array("admin"));
+$langs->loadLangs(array("admin", "website", "other"));
+
+$arrayofaifeatures = getLitOfAIFeatures();
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -49,10 +52,7 @@ if (empty($action)) {
 	$action = 'edit';
 }
 
-$value = GETPOST('value', 'alpha');
-$label = GETPOST('label', 'alpha');
-$scandir = GETPOST('scan_dir', 'alpha');
-$type = 'myobject';
+$content = GETPOST('content');
 
 $error = 0;
 $setupnotempty = 0;
@@ -162,6 +162,56 @@ if (empty($setupnotempty)) {
 
 // Page end
 print dol_get_fiche_end();
+
+
+// Section to test
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="add">';
+print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+
+$functioncode = GETPOST('functioncode');
+$out = '';
+
+if ($functioncode) {
+	$labeloffeature = empty($arrayofaifeatures[GETPOST('functioncode')]['label']) ? 'Undefined' : $arrayofaifeatures[GETPOST('functioncode')]['label'];
+
+	$out .= $langs->trans("Test").' '.$labeloffeature.'...<br><br>';
+
+	if (GETPOST('functioncode') == 'textgenerationemail') {
+		$showlinktoai = 1;
+		$showlinktolayout = 0;
+
+
+		$neweditor = new DolEditor('aicontenttotest', $content);
+		$out .= $neweditor->Create(1);
+
+		$out .= $form->buttonsSaveCancel("Test");
+	} else {
+		$out .= $langs->trans("FeatureNotYetAvailable").'<br><br>';
+		$functioncode = '';
+	}
+}
+
+if (!$functioncode) {
+	// Combo list of AI features
+	$out .= '<select name="functioncode" id="functioncode" class="flat minwidth300" placeholder="Test feature">';
+	$out .= '<option value="-1">'.$langs->trans("SelectFeatureToTest").'</option>';
+	foreach ($arrayofaifeatures as $key => $val) {
+		$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
+		$labeltext = $langs->trans($arrayofaifeatures[$key]['label']);
+		$out .= '<option value="'.$key.'" data-html="'.dol_escape_htmltag($labelhtml).'"';
+		$out .= (GETPOST('functioncode') == $key ? ' selected="selected"' : '');
+		$out .= '>'.dol_escape_htmltag($labeltext).'</option>';
+	}
+	$out .= '</select>';
+	$out .= ajax_combobox("functioncode");
+
+	$out .= '<input class="button small" type="submit" name="testmode" value="'.$langs->trans("Test").'">';
+}
+print $out;
+
+print '</form>';
 
 llxFooter();
 $db->close();

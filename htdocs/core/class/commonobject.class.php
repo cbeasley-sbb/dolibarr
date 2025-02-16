@@ -653,8 +653,14 @@ abstract class CommonObject
 
 	/**
 	 * @var string 		The civility code, not an integer
+	 * @deprecated		Use $civlity_code
 	 */
 	public $civility_id;
+
+	/**
+	 * @var string 		The civility code, not an integer
+	 */
+	public $civility_code;
 
 	// Dates
 	/**
@@ -10354,9 +10360,9 @@ abstract class CommonObject
 	/**
 	 * Create object in the database
 	 *
-	 * @param  User		$user		User that creates
-	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
-	 * @return int<-1,max>			Return integer <0 if KO, Id of created object if OK
+	 * @param  User			$user		User that creates
+	 * @param  int<0,1>		$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int<-1,max>				Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createCommon(User $user, $notrigger = 0)
 	{
@@ -10376,6 +10382,7 @@ abstract class CommonObject
 			$fieldvalues['date_creation'] = $this->db->idate($now);
 			$this->date_creation = $this->db->idate($now);
 		}
+		// For backward compatibility, if a property ->fk_user_creat exists and not filled.
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
 			$fieldvalues['fk_user_creat'] = $user->id;
 			$this->fk_user_creat = $user->id;

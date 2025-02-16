@@ -27,7 +27,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/ai.lib.php';
+require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
 
 /**
  * @var Conf $conf
@@ -38,6 +38,8 @@ require_once '../lib/ai.lib.php';
  */
 
 $langs->loadLangs(array("admin", "website", "other"));
+
+$arrayofaifeatures = getLitOfAIFeatures();
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -80,18 +82,6 @@ $item->defaultFieldValue = '';
 $setupnotempty += count($formSetup->items);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
-// List of AI features
-$arrayofaifeatures = array(
-	'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto'=>'', 'status'=>'development'),
-	'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto'=>'', 'status'=>'development'),
-	'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused'),
-	'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused'),
-	'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused'),
-	'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused'),
-	'transcription' => array('label' => 'Transcription', 'picto'=>'', 'status'=>'notused'),
-	'translation' => array('label' => 'Translation', 'picto'=>'', 'status'=>'notused')
-);
 
 
 /*
@@ -279,6 +269,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 
 	$out .= '</td>';
 	$out .= '</tr>';
+
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
 	$out .= '<span id="prePrompt" class="spanforparamtooltip">';
@@ -382,6 +373,8 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$showlinktoailabel = $langs->trans("ToTest");
 			$formmail = new FormMail($db);
 			$htmlname = $key;
+
+			$out .= '<br><br>';
 
 			// Fill $out
 			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';

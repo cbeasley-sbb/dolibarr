@@ -15,26 +15,22 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Need to have the following variables defined:
- * $conf
- * $formmail
- * $formwebsite (optional)
- * $showlinktolayout='emailing', 'email', 'websitepage', ...
- * $showlinktolayoutlabel='...'
- * $showlinktoai ('' or 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', ...)
- * $showlinktoailabel='...'
- * $htmlname
  */
-/**
+
+ /**
  * @var Conf $conf
- * @var ?FormMail $formmail
- * @var ?FormWebsite $formwebsite
- * @var string $htmlname
- * @var string $showlinktolayout
- * @var string $showlinktolayoutlabel
+ * @var ?FormMail 		$formmail
+ * @var ?FormWebsite 	$formwebsite
+ * @var string 			$htmlname
+ * @var string 			$showlinktolayout		'emailing', 'email', 'websitepage', ...
+ * @var string 			$showlinktolayoutlabel	'...'
+ * @var string 			$showlinktoai			'' or 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', ...
+ * @var string 			$showlinktoailabel		'...'
+ * @var	string			$htmlname
+ * @var ?string			$out
  */
-// Protection to avoid direct call of template
+
+//Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
@@ -59,9 +55,10 @@ if (empty($htmlname)) {
 @phan-var-force ?string         $out
 ';
 
-if (!isset($out)) {
+if (!isset($out)) {	// Init to empty string if not defined
 	$out = '';
 }
+
 // Add link to add layout
 if ($showlinktolayout) {
 	$out .= '<a href="#" id="linkforlayouttemplates" class="notasortlink inline-block alink marginrightonly">';
